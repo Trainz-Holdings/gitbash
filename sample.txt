@@ -1,2 +1,3 @@
 Hi 
-how are youi
+how are you
+we are checking the stash command
