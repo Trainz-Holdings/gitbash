@@ -1,0 +1,66 @@
+# aiops.yaml
+aiopsYaml: |-
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: apmia-mysql
+    labels:
+      tier: monitoring
+      app: caagent_apmia
+      version: v1
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        tier: monitoring
+        app: caagent_apmia
+        version: v1
+    template:
+      metadata:
+        labels:
+          tier: monitoring
+          app: caagent_apmia
+          version: v1
+      spec:
+        containers:
+          - resources:
+            env:
+              - name: APMENV_AGENTMANAGER_URL_1
+                value: <AGENTMANAGER URL>
+              - name: APMENV_AGENTMANAGER_CREDENTIAL
+                value: <AGENTMANAGER Token>
+              - name: APMENV_INTROSCOPE_AGENT_DBMONITOR_MYSQL_PROFILES
+                value: cluster1
+              - name: APMENV_INTROSCOPE_AGENT_DBMONITOR_MYSQL_PROFILES_CLUSTER1_INSTANCENAME
+                value: <DB Instancename, EX: sys>
+              - name: APMENV_INTROSCOPE_AGENT_DBMONITOR_MYSQL_PROFILES_CLUSTER1_HOSTNAME
+                value: <SVC Name>-proxysql
+              - name: APMENV_INTROSCOPE_AGENT_DBMONITOR_MYSQL_PROFILES_CLUSTER1_USERNAME
+                value: root
+              - name: APMENV_INTROSCOPE_AGENT_DBMONITOR_MYSQL_PROFILES_CLUSTER1_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: mysql-cluster-secrets
+                    key: root
+              - name: APMENV_INTROSCOPE_AGENT_EXTENSIONS_BUNDLES_BOOT_LOAD
+                value: MySQL
+              - name: APMENV_INTROSCOPE_AGENT_AGENTNAME
+                value: MySQL-Monitor
+              - name: APMENV_INTROSCOPE_AGENT_HOSTNAME
+                value: <NAMESPACE>
+              - name: APMENV_INTROSCOPE_AGENT_CUSTOMPROCESSNAME
+                value: <NAMESPACE>-MySQL-Monitor
+            name: apmia
+            image: caapm/apmia:latest
+            imagePullPolicy: Always
+            resources:
+              limits:
+                cpu: 0.7
+                memory: 700M
+            volumeMounts:
+            -  mountPath: /etc/certificate/secret
+               name: login
+        volumes:
+        - name: login
+          secret:
+            secretName: mysql-cluster-secrets

@@ -1,0 +1,15 @@
+project_name: "sedstarhse-gr-stg-spamlab-markup"
+email: "nirmal-nk.kumar@broadcom.com"
+distribute_to_bintray: "yes"
+base_project_name: "mysql-operator"
+base_image_pull_service_account: "all"
+operator: "true"
+operator_service_account: "mysql-operator"
+team:
+  name: "mysql-operator"
+  token: "77fc334c-7ff4-8f6d-f317-680f676e4675"
+version: "1.0"
+entrypoint: "helm" 
+kubernetes:
+  env:
+    name: "sdstrgrsaasgke2"
